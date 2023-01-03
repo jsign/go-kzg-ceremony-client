@@ -13,9 +13,8 @@ func main() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "spotcli",
-	Short: "spotcli is a client for the KZG SPOT Ceremony",
-	Long:  `spotcli is a Go client for the KZG Small-Powers-Of-Tau Ceremony`,
+	Use:   "kzgcli",
+	Short: "spotcli is a Go client for the Powers-Of-Tau ceremony for Ethereum EIP-4844.",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
 	},
