@@ -16,7 +16,7 @@ func main() {
 
 var rootCmd = &cobra.Command{
 	Use:   "kzgcli",
-	Short: "spotcli is a Go client for the Powers-Of-Tau ceremony for Ethereum EIP-4844.",
+	Short: "kzgcli is a Go client for the Powers-Of-Tau ceremony for Ethereum EIP-4844",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := cmd.Usage(); err != nil {
 			log.Fatalf("cmd usage failed: %s", err)
@@ -30,8 +30,8 @@ func init() {
 	rootCmd.AddCommand(statusCmd)
 
 	contributeCmd.Flags().String("session-id", "", "The sesion id as generated in the 'session_id' field in the authentication process")
-	contributeCmd.Flags().Bool("drand", false, "Pull randomness from the Drand network to be mixed with local CSRNG")
-	contributeCmd.Flags().String("urlrand", "", "Pull randomness from an HTTP endpoint mixed with local CSRNG")
+	contributeCmd.Flags().Bool("drand", false, "Pull entropy from the Drand network to be mixed with local CSRNG")
+	contributeCmd.Flags().String("urlrand", "", "Pull entropy from an HTTP endpoint mixed with local CSRNG")
 	rootCmd.AddCommand(contributeCmd)
 
 	rootCmd.AddCommand(verifyTranscriptCmd)
