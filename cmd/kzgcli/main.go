@@ -17,6 +17,11 @@ func main() {
 var rootCmd = &cobra.Command{
 	Use:   "kzgcli",
 	Short: "kzgcli is a Go client for the Powers-Of-Tau ceremony for Ethereum EIP-4844",
+	Long: `kzgcli is a Go client for the Powers-Of-Tau ceremony for Ethereum EIP-4844.
+
+You can check the following link to have detailed steps on how to contribute using this client:
+https://github.com/jsign/go-kzg-ceremony-client#i-want-to-participate-in-the-ceremony-how-should-i-use-this-client
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := cmd.Usage(); err != nil {
 			log.Fatalf("cmd usage failed: %s", err)

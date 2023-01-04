@@ -1,9 +1,27 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/jsign/go-kzg-ceremony-client)](https://goreportcard.com/report/github.com/jsign/go-kzg-ceremony-client) ![test](https://github.com/jsign/go-kzg-ceremony-client/actions/workflows/test.yaml/badge.svg) ![releases](https://github.com/jsign/go-kzg-ceremony-client/actions/workflows/release.yaml/badge.svg)
+
+
 # Ethereum EIP-4844 Powers of Tau ceremony client
 
 This repository contains an implementation of a client to participate in the Powers of Tau ceremony for EIP-4844 in  Ethereum. This is a multi-party ceremony to generate an SRS needed for KZG commitments.
 
 For _bls12-381_ elliptic curve operations such as group multiplication and pairings, the implementation uses the [gnark-crypto](https://github.com/ConsenSys/gnark-crypto) library ([audited Oct-2022](https://github.com/ConsenSys/gnark-crypto/blob/master/audit_oct2022.pdf)).
 
+## Table of content
+- [Ethereum EIP-4844 Powers of Tau ceremony client](#ethereum-eip-4844-powers-of-tau-ceremony-client)
+  - [Table of content](#table-of-content)
+  - [What are the Powers of Tau ceremony, EIP-4844 and KZG commitments?](#what-are-the-powers-of-tau-ceremony-eip-4844-and-kzg-commitments)
+  - [Features](#features)
+  - [I want to participate in the ceremony, how should I use this client?](#i-want-to-participate-in-the-ceremony-how-should-i-use-this-client)
+    - [Step 1 - Get the `kzgcli` CLI command](#step-1---get-the-kzgcli-cli-command)
+    - [Step 2 - Get your session-id keys](#step-2---get-your-session-id-keys)
+    - [Step 3 - Contribute!](#step-3---contribute)
+    - [Step 4 (optional) - Check that your contribution is in the new transcript](#step-4-optional---check-that-your-contribution-is-in-the-new-transcript)
+  - [External entropy](#external-entropy)
+  - [Verify the current sequencer transcript ourselves](#verify-the-current-sequencer-transcript-ourselves)
+  - [Tests and benchmarks](#tests-and-benchmarks)
+  - [Side-effects of this ceremony client work](#side-effects-of-this-ceremony-client-work)
+  - [Potential improvements](#potential-improvements)
 ## What are the Powers of Tau ceremony, EIP-4844 and KZG commitments?
 If you're confused about these terms, the best place to understand them better is the [official ceremony](https://ceremony.ethereum.org/) website which gives a high-level explanation of these concepts. It also has a useful FAQ section that digs a bit deeper into the details.
 
@@ -20,7 +38,7 @@ This client implementation has the following features:
 Using external entropy **does not** interfere with contribution time. It's pulled before starting to ask for our turn to the sequencer, so drand and/or the REST API can't add a failure case or extra delays. This is important to contribute as fast as possible, and allow the sequencer to give the turn to another contributor!
 
 
-## OK, I want to participate in the ceremony, how should I use this client? 
+## I want to participate in the ceremony, how should I use this client? 
 Contributing to the ceremony is very easy, you only need at least one of:
 - An Ethereum address that has sent at least 3 transactions at the Merge block number.
 - A GitHub account that has a commit dated before 1 August 2022 00:00 UTC.
@@ -129,6 +147,7 @@ As shown, in a modern desktop CPU the contribution calculation takes less than 3
 While creating this ceremony client, I contributed to other repositories in the ecosystem:
 - To validate this client implementation without a sequencer, I created the [kzg-ceremony-test-vectors](https://github.com/jsign/kzg-ceremony-test-vectors) repository which generates batch contributions from the spec initialContribution.json file with a fixed set of secrets producing a deterministic/reproducible output that clients can check against the sequencer reference implementation. [You can see the unit-test leveraging this test vector](https://github.com/jsign/go-kzg-ceremony-client/blob/917d4b5da6a54da4879fd8869e84344dd57ad950/contribution/contribution_test.go#L33).
 - I detected a slight bug in one of the Rust clients and [fixed it](https://github.com/crate-crypto/small-powers-of-tau/pull/4).
+- While trying to add ECDSA EIP-721 signature verification for the transcript, I found [an inconsistency](https://hackmd.io/@jsign/kzg-ceremony-eip712-problem) in how `eth-rs` or `go-ethereum` implement the EIP. This potential bug doesn't allow this client to verify ECDSA signatures in the transcript. This situation is under investigation.
 
 
 ## Potential improvements
