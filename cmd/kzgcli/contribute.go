@@ -37,7 +37,7 @@ var contributeCmd = &cobra.Command{
 			log.Fatalf("get --drand flag value: %s", err)
 		}
 		if drand {
-			fmt.Printf("Pulling randomness from drand... ")
+			fmt.Printf("Pulling entropy from drand... ")
 			drandBytes, drandRound, err := extrand.GetFromDrand(cmd.Context())
 			if err != nil {
 				log.Fatalf("get drand bytes: %s", err)
@@ -51,7 +51,7 @@ var contributeCmd = &cobra.Command{
 			log.Fatalf("get --session-id flag value: %s", err)
 		}
 		if urlrand != "" {
-			fmt.Printf("Pulling randomness from %s... ", urlrand)
+			fmt.Printf("Pulling entropy from %s... ", urlrand)
 			urlBytes, err := extrand.GetFromURL(cmd.Context(), urlrand)
 			if err != nil {
 				log.Fatalf("get bytes from url: %s", err)
