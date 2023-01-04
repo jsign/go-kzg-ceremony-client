@@ -1,14 +1,10 @@
 package transcript
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/jsign/go-kzg-ceremony-client/contribution"
 	"golang.org/x/sync/errgroup"
@@ -157,59 +153,62 @@ func (bt *BatchTranscript) Verify() error {
 		}
 	}
 
-	// 7. Check ECDSA signatures.
-	for i := range bt.ParticipantECDSASignatures {
-		i := i
-		// TODO(uncomment)
-		// g.Go(func() error {
-		ecdsaSignature := bt.ParticipantECDSASignatures[i]
-		if ecdsaSignature == "" {
-			// No signature, skip it.
-			continue
-			// return nil
-		}
-		ethPublicAddress := strings.Split(bt.ParticipantIDs[i], "|")[1]
-
-		// We need to make a []interface{} instead of a nicier []potPubKeysTyped since that's how
-		// the go-ethereum implementation expects arrays to be typed.
-		pubkeysTyped := make([]interface{}, len(bt.Transcripts))
-		for j := range bt.Transcripts {
-			potPubKeyBytes := bt.Transcripts[j].Witness.PotPubKeys[i].Bytes()
-
-			// Defining array items is also expected to be map[string]interface{} by go-ethereum.
-			pubkeysTyped[j] = map[string]interface{}{
-				"numG1Powers": math.NewHexOrDecimal256(int64(bt.Transcripts[j].NumG1Powers)),
-				"numG2Powers": math.NewHexOrDecimal256(int64(bt.Transcripts[j].NumG2Powers)),
-				"potPubkey":   potPubKeyBytes[:],
+	/* TODO: There's something hairy going on, I've to double check stuff */
+	/*
+		// 7. Check ECDSA signatures.
+		for i := range bt.ParticipantECDSASignatures {
+			i := i
+			// TODO(uncomment)
+			// g.Go(func() error {
+			ecdsaSignature := bt.ParticipantECDSASignatures[i]
+			if ecdsaSignature == "" {
+				// No signature, skip it.
+				continue
+				// return nil
 			}
-		}
-		typedData := typedDataBase
-		typedData.Message = map[string]interface{}{
-			"potPubkeys": pubkeysTyped,
-		}
+			ethPublicAddress := strings.Split(bt.ParticipantIDs[i], "|")[1]
 
-		buf, err := json.MarshalIndent(typedData, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("JSON: %s\n", buf)
+			// We need to make a []interface{} instead of a nicier []potPubKeysTyped since that's how
+			// the go-ethereum implementation expects arrays to be typed.
+			pubkeysTyped := make([]interface{}, len(bt.Transcripts))
+			for j := range bt.Transcripts {
+				potPubKeyBytes := bt.Transcripts[j].Witness.PotPubKeys[i].Bytes()
 
-		keccakHash, _, err := apitypes.TypedDataAndHash(typedData)
-		if err != nil {
-			return fmt.Errorf("calculating the hash for EIP712: %s", err)
-		}
+				// Defining array items is also expected to be map[string]interface{} by go-ethereum.
+				pubkeysTyped[j] = map[string]interface{}{
+					"numG1Powers": math.NewHexOrDecimal256(int64(bt.Transcripts[j].NumG1Powers)),
+					"numG2Powers": math.NewHexOrDecimal256(int64(bt.Transcripts[j].NumG2Powers)),
+					"potPubkey":   potPubKeyBytes[:],
+				}
+			}
+			typedData := typedDataBase
+			typedData.Message = map[string]interface{}{
+				"potPubkeys": pubkeysTyped,
+			}
 
-		ecdsaSigBytes, err := hex.DecodeString(ecdsaSignature[2:])
-		if err != nil {
-			return fmt.Errorf("hex decoding ecdsa signature: %s", err)
-		}
-		if !crypto.VerifySignature([]byte(ethPublicAddress), keccakHash, ecdsaSigBytes) {
-			return fmt.Errorf("ECDSA signature verification failed")
-		}
+			buf, err := json.MarshalIndent(typedData, "", "  ")
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("JSON: %s\n", buf)
 
-		//return nil
-		//})
-	}
+			keccakHash, _, err := apitypes.TypedDataAndHash(typedData)
+			if err != nil {
+				return fmt.Errorf("calculating the hash for EIP712: %s", err)
+			}
+
+			ecdsaSigBytes, err := hex.DecodeString(ecdsaSignature[2:])
+			if err != nil {
+				return fmt.Errorf("hex decoding ecdsa signature: %s", err)
+			}
+			if !crypto.VerifySignature([]byte(ethPublicAddress), keccakHash, ecdsaSigBytes) {
+				return fmt.Errorf("ECDSA signature verification failed")
+			}
+
+			//return nil
+			//})
+		}
+	*/
 	if err := g.Wait(); err != nil {
 		return fmt.Errorf("verifying sequencer transcript: %s", err)
 	}

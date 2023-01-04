@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/jsign/go-kzg-ceremony-client/sequencerclient"
 	"github.com/spf13/cobra"
@@ -25,9 +26,10 @@ var verifyTranscriptCmd = &cobra.Command{
 		fmt.Printf("OK\n")
 
 		fmt.Printf("Verifying transcript... ")
+		now := time.Now()
 		if err := transcript.Verify(); err != nil {
 			log.Fatalf("verifying transcript: %s", err)
 		}
-		fmt.Printf("Valid!\n")
+		fmt.Printf("Valid! (took %.02fs)\n", time.Since(now).Seconds())
 	},
 }
