@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
@@ -129,7 +130,7 @@ func TestReferenceImplementationTestVector(t *testing.T) {
 	}
 }
 
-func TestExternalRandomnessWithDrand(t *testing.T) {
+func TestExternalRandomness(t *testing.T) {
 	t.Parallel()
 
 	contributionFile, err := os.ReadFile("testdata/initialContribution.json")
@@ -138,17 +139,23 @@ func TestExternalRandomnessWithDrand(t *testing.T) {
 	bc, err := DecodeBatchContribution(contributionFile)
 	require.NoError(t, err)
 
+	// Add drand randomness.
 	drandres, round, err := extrand.GetFromDrand(context.Background())
 	require.NoError(t, err)
 	require.NotZero(t, round)
 	require.NotEmpty(t, drandres)
 
-	// Verify that the new contribution is a valid step in the ceremony.
-	originalbc, err := DecodeBatchContribution(contributionFile)
+	// Add external URL randomness
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("imexternalrandomness"))
+	}))
+	urlrandmness, err := extrand.GetFromURL(context.Background(), s.URL)
 	require.NoError(t, err)
-	ok, err := bc.Verify(originalbc)
+
+	// Contribute with the two available external randomness bytes.
+	err = bc.Contribute(drandres, urlrandmness)
 	require.NoError(t, err)
-	require.True(t, ok)
 }
 
 func BenchmarkDecodeJSON(b *testing.B) {
