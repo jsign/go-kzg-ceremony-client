@@ -1,11 +1,9 @@
 package transcript
 
 import (
-	"encoding/json"
 	"fmt"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
-	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/jsign/go-kzg-ceremony-client/contribution"
 	"golang.org/x/sync/errgroup"
 )
@@ -13,42 +11,10 @@ import (
 var (
 	g2Generator bls12381.G2Affine
 	g1Generator bls12381.G1Affine
-
-	typedDataBase apitypes.TypedData
 )
 
 func init() {
 	_, _, g1Generator, g2Generator = bls12381.Generators()
-	typedDataBaseJSON := `
-	{
-        "types": {
-            "EIP712Domain": [
-                {"name":"name", "type":"string"},
-                {"name":"version", "type":"string"},
-                {"name":"chainId", "type":"uint256"}
-            ],
-            "ContributionPubkey": [
-                {"name": "numG1Powers", "type": "uint256"},
-                {"name": "numG2Powers", "type": "uint256"},
-                {"name": "potPubkey", "type": "bytes"}
-            ],
-            "PoTPubkeys": [
-                { "name": "potPubkeys", "type": "ContributionPubkey[]"}
-            ]
-        },
-        "primaryType": "PoTPubkeys",
-        "domain": {
-            "name": "Ethereum KZG Ceremony",
-            "version": "1.0",
-            "chainId": "1"
-        },
-        "message": {}
-    }
-	`
-	if err := json.Unmarshal([]byte(typedDataBaseJSON), &typedDataBase); err != nil {
-		// This should never happend since the base JSON template is hardcoded and valid.
-		panic(err)
-	}
 }
 
 type Transcript struct {
