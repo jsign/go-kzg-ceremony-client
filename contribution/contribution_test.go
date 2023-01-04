@@ -157,7 +157,7 @@ func BenchmarkDecodeJSON(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		DecodeBatchContribution(contributionFile)
+		_, _ = DecodeBatchContribution(contributionFile)
 	}
 }
 
@@ -169,6 +169,6 @@ func BenchmarkContribute(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		bc.Contribute()
+		_ = bc.Contribute()
 	}
 }

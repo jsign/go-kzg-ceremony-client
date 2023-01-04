@@ -131,7 +131,7 @@ func (c *Client) Contribute(ctx context.Context, sessionID string, batch *contri
 		return nil, fmt.Errorf("contribution error (Code: %s, Error: %s)", contributionError.Code, contributionError.Error)
 	}
 	if res.StatusCode != http.StatusOK {
-		io.Copy(io.Discard, res.Body)
+		_, _ = io.Copy(io.Discard, res.Body)
 		return nil, fmt.Errorf("unexpected contribution error (status code: %s)", res.Status)
 	}
 

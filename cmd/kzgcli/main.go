@@ -2,20 +2,25 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
 func main() {
-	rootCmd.Execute()
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatalf("root command failed: %s", err)
+	}
 }
 
 var rootCmd = &cobra.Command{
 	Use:   "kzgcli",
 	Short: "spotcli is a Go client for the Powers-Of-Tau ceremony for Ethereum EIP-4844.",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Usage()
+		if err := cmd.Usage(); err != nil {
+			log.Fatalf("cmd usage failed: %s", err)
+		}
 	},
 }
 
