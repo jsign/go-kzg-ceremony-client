@@ -96,7 +96,6 @@ func contributeToCeremony(ctx context.Context, client *sequencerclient.Client, s
 	fmt.Printf("It's our turn! Contributing...\n")
 	now := time.Now()
 	if err := contributionBatch.Contribute(extRandomness...); err != nil {
-		// TODO(jsign): /contribution/abort?
 		log.Fatalf("failed on calculating contribution: %s", err)
 	}
 	fmt.Printf("Contribution ready, took %.02fs\n", time.Since(now).Seconds())

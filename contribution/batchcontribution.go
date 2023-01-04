@@ -66,7 +66,6 @@ func (bc *BatchContribution) contributeWithFrs(frs []*bls12381Fr.Element) error 
 
 				contribution.updatePowersOfTau(xBig)
 				contribution.updateWitness(xBig)
-				// TODO: if identity? -> sign_identity()
 
 				// Cleanup in-memory secret.
 				xBig.SetInt64(0)

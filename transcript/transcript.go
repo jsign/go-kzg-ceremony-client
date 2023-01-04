@@ -153,62 +153,6 @@ func (bt *BatchTranscript) Verify() error {
 		}
 	}
 
-	/* TODO: There's something hairy going on, I've to double check stuff */
-	/*
-		// 7. Check ECDSA signatures.
-		for i := range bt.ParticipantECDSASignatures {
-			i := i
-			// TODO(uncomment)
-			// g.Go(func() error {
-			ecdsaSignature := bt.ParticipantECDSASignatures[i]
-			if ecdsaSignature == "" {
-				// No signature, skip it.
-				continue
-				// return nil
-			}
-			ethPublicAddress := strings.Split(bt.ParticipantIDs[i], "|")[1]
-
-			// We need to make a []interface{} instead of a nicier []potPubKeysTyped since that's how
-			// the go-ethereum implementation expects arrays to be typed.
-			pubkeysTyped := make([]interface{}, len(bt.Transcripts))
-			for j := range bt.Transcripts {
-				potPubKeyBytes := bt.Transcripts[j].Witness.PotPubKeys[i].Bytes()
-
-				// Defining array items is also expected to be map[string]interface{} by go-ethereum.
-				pubkeysTyped[j] = map[string]interface{}{
-					"numG1Powers": math.NewHexOrDecimal256(int64(bt.Transcripts[j].NumG1Powers)),
-					"numG2Powers": math.NewHexOrDecimal256(int64(bt.Transcripts[j].NumG2Powers)),
-					"potPubkey":   potPubKeyBytes[:],
-				}
-			}
-			typedData := typedDataBase
-			typedData.Message = map[string]interface{}{
-				"potPubkeys": pubkeysTyped,
-			}
-
-			buf, err := json.MarshalIndent(typedData, "", "  ")
-			if err != nil {
-				panic(err)
-			}
-			fmt.Printf("JSON: %s\n", buf)
-
-			keccakHash, _, err := apitypes.TypedDataAndHash(typedData)
-			if err != nil {
-				return fmt.Errorf("calculating the hash for EIP712: %s", err)
-			}
-
-			ecdsaSigBytes, err := hex.DecodeString(ecdsaSignature[2:])
-			if err != nil {
-				return fmt.Errorf("hex decoding ecdsa signature: %s", err)
-			}
-			if !crypto.VerifySignature([]byte(ethPublicAddress), keccakHash, ecdsaSigBytes) {
-				return fmt.Errorf("ECDSA signature verification failed")
-			}
-
-			//return nil
-			//})
-		}
-	*/
 	if err := g.Wait(); err != nil {
 		return fmt.Errorf("verifying sequencer transcript: %s", err)
 	}
