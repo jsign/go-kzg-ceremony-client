@@ -32,7 +32,7 @@ func TestDevnetVerification(t *testing.T) {
 }
 
 func createClient(t *testing.T) *Client {
-	c, err := NewDevnet()
+	c, err := New()
 	require.NoError(t, err)
 	return c
 }

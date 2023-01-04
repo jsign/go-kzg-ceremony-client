@@ -37,7 +37,7 @@ var contributeCmd = &cobra.Command{
 			log.Fatalf("get --drand flag value: %s", err)
 		}
 		if drand {
-			fmt.Printf("Pulling randomness from Drand... ")
+			fmt.Printf("Pulling randomness from drand... ")
 			drandBytes, drandRound, err := extrand.GetFromDrand(cmd.Context())
 			if err != nil {
 				log.Fatalf("get drand bytes: %s", err)
@@ -60,7 +60,7 @@ var contributeCmd = &cobra.Command{
 			extRandomness = append(extRandomness, urlBytes)
 		}
 
-		client, err := getSequencerClient(cmd)
+		client, err := sequencerclient.New()
 		if err != nil {
 			log.Fatalf("creating sequencer client: %s", err)
 		}

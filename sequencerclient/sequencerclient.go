@@ -13,24 +13,13 @@ import (
 	"github.com/jsign/go-kzg-ceremony-client/transcript"
 )
 
-const (
-	devnetSequencerURL  = "https://kzg-ceremony-sequencer-dev.fly.dev"
-	mainnetSequencerURL = ""
-)
+const sequencerURL = "https://sequencer.ceremony.ethereum.org"
 
 type Client struct {
 	sequencerURL string
 }
 
 func New() (*Client, error) {
-	return newClient(mainnetSequencerURL)
-}
-
-func NewDevnet() (*Client, error) {
-	return newClient(devnetSequencerURL)
-}
-
-func newClient(sequencerURL string) (*Client, error) {
 	return &Client{
 		sequencerURL: sequencerURL,
 	}, nil

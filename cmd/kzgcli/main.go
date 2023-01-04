@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jsign/go-kzg-ceremony-client/sequencerclient"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +20,6 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().Bool("devnet", false, "Use the devnet sequencer")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
 	rootCmd.AddCommand(statusCmd)
@@ -39,15 +37,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func getSequencerClient(cmd *cobra.Command) (*sequencerclient.Client, error) {
-	devnet, err := cmd.Flags().GetBool("devnet")
-	if err != nil {
-		return nil, fmt.Errorf("get --devnet flag: %s", err)
-	}
-	if devnet {
-		return sequencerclient.NewDevnet()
-	}
-	return sequencerclient.New()
 }

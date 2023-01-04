@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/jsign/go-kzg-ceremony-client/sequencerclient"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +12,7 @@ var verifyTranscriptCmd = &cobra.Command{
 	Use:   "verify-transcript",
 	Short: "Pulls and verifies the current sequencer transcript",
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := getSequencerClient(cmd)
+		client, err := sequencerclient.New()
 		if err != nil {
 			log.Fatalf("creating sequencer client: %s", err)
 		}
