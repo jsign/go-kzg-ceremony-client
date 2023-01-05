@@ -26,7 +26,7 @@ func (bc *BatchContribution) Contribute(extRandomness ...[]byte) error {
 		for _, externalRandomness := range extRandomness {
 			extFr := &bls12381Fr.Element{}
 
-			// SetBytes() is safe to call with an arbitrarly sized []byte since:
+			// SetBytes() is safe to call with an arbitrary sized []byte since:
 			// - A big.Int `r` will be created from the bytes, which is an arbitrary precision integer.
 			// - gnark-crypto will automatically make r.Mod(BLS_MODULUS) to have a proper Fr.
 			extFr.SetBytes(externalRandomness)
