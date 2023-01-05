@@ -22,6 +22,8 @@ For _bls12-381_ elliptic curve operations such as group multiplication and pairi
   - [Tests and benchmarks](#tests-and-benchmarks)
   - [Side-effects of this ceremony client work](#side-effects-of-this-ceremony-client-work)
   - [Potential improvements](#potential-improvements)
+  - [License](#license)
+
 ## What are the Powers of Tau ceremony, EIP-4844 and KZG commitments?
 If you're confused about these terms, the best place to understand them better is the [official ceremony](https://ceremony.ethereum.org/) website which gives a high-level explanation of these concepts. It also has a useful FAQ section that digs a bit deeper into the details.
 
@@ -153,3 +155,6 @@ While creating this ceremony client, I contributed to other repositories in the 
 ## Potential improvements
 Despite this client is ready to contribute to the ceremony, there're a couple of things that it doesn't support but could if I can convince myself of some tradeoffs:
 - The `gnark-crypto` library [doesn't support BLS signing yet](https://github.com/ConsenSys/gnark-crypto/issues/116), which is incredibly unfortunate. This doesn't allow the client to do BLS signing or verification in the transcript. This is an optional feature for clients, so it isn't a big deal or create any risk. Despite gnark-crypto has support for group multiplication and pairings, the biggest pending work for signing is implementing the _hash to curve_ step of signing which isn't entirely trivial. As a workaround, I could use a separate BLS library to do signing/verification, but that would mean using two BLS libraries and I'd prefer to be 100% clear about which library is used in this repo for _all_ cryptographic operations just by looking at the [go.mod](go.mod) file.
+
+## License
+MIT
