@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/consensys/gnark-crypto v0.8.0
 	github.com/drand/drand v1.4.7
-	github.com/ethereum/go-ethereum v1.10.26
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/xeipuuv/gojsonschema v1.2.0
@@ -15,11 +14,9 @@ require (
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/consensys/bavard v0.1.13 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
 	github.com/drand/kyber v1.1.15 // indirect
 	github.com/drand/kyber-bls12381 v0.2.3 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
