@@ -49,7 +49,7 @@ Currently, the ceremony sequencer is in testnet mode, but everything described i
 
 ### Step 1 - Get the `kzgcli` CLI command
 The `kzgcli` command is the CLI of this ceremony client, you can get it in different ways:
-- Compiling from source: For this, you'll need to have installed the `go` compiler. Pull this repo, and run `make build` or `go build -o kzgcli ./cmd/kzgcli`. This will leave the `kzgcli` binary in your current folder (you might want to `sudo mv kzgcli /usr/local` or your PATH for convenience).
+- Compiling from source: For this, you'll need to have installed the `go` compiler. Pull this repo, and run `make build` or `go build -o kzgcli ./cmd/kzgcli`. This will leave the `kzgcli` binary in your current folder (you might want to `sudo mv kzgcli /usr/local/bin` or your PATH for convenience).
 - Download binaries from the [releases section](https://github.com/jsign/go-kzg-ceremony-client/releases).
 
 
