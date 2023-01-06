@@ -9,3 +9,7 @@ test:
 build:
 	go build -o kzgcli ./cmd/kzgcli
 .PHONY: build
+
+bench:
+	go test ./... -run=none -bench=.
+.PHONY: bench
