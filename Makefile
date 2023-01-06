@@ -5,3 +5,7 @@ lint:
 test:
 	go test ./... -race
 .PHONY: test
+
+build:
+	go build -o kzgcli ./cmd/kzgcli
+.PHONY: build
