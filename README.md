@@ -149,7 +149,7 @@ As shown, in a modern desktop CPU the contribution calculation takes less than 3
 While creating this ceremony client, I contributed to other repositories in the ecosystem:
 - To validate this client implementation without a sequencer, I created the [kzg-ceremony-test-vectors](https://github.com/jsign/kzg-ceremony-test-vectors) repository which generates batch contributions from the spec initialContribution.json file with a fixed set of secrets producing a deterministic/reproducible output that clients can check against the sequencer reference implementation. [You can see the unit-test leveraging this test vector](https://github.com/jsign/go-kzg-ceremony-client/blob/917d4b5da6a54da4879fd8869e84344dd57ad950/contribution/contribution_test.go#L33).
 - I detected a slight bug in one of the Rust clients and [fixed it](https://github.com/crate-crypto/small-powers-of-tau/pull/4).
-- While trying to add ECDSA EIP-721 signature verification for the transcript, I found [an inconsistency](https://hackmd.io/@jsign/kzg-ceremony-eip712-problem) in how `eth-rs` or `go-ethereum` implement the EIP. This potential bug doesn't allow this client to verify ECDSA signatures in the transcript. This situation is under investigation.
+- While trying to add ECDSA EIP-721 signature verification for the transcript, I found [an inconsistency](https://hackmd.io/@jsign/kzg-ceremony-eip712-problem) in how `eth-rs` or `go-ethereum` implement the EIP. This potential bug doesn't allow this client to verify ECDSA signatures in the transcript. ~~This situation is under investigation.~~ ([fixed in `go-ethereum` PR](https://github.com/ethereum/go-ethereum/pull/26462))
 
 
 ## Potential improvements
