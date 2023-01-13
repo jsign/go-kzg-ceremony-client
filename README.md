@@ -57,7 +57,7 @@ The `kzgcli` command is the CLI of this ceremony client, you can get it in diffe
 You'll need a `session-id` to participate in the ceremony. A `session-id` is a GUID string that you'll need to pass to the `kzgcli` CLI as a flag.
 
 To get your `session-id` do the following:
-- Open the [request_link](https://sequencer.ceremony.ethereum.org/auth/request_link) endpoint in your browser.
+- Open the [request_link](https://seq.ceremony.ethereum.org/auth/request_link) endpoint in your browser.
 - You'll be presented with two links, one for Ethereum address participation and one for GitHub account participation. Open the corresponding link and follow the explained steps.
 - In the end, you'll receive a JSON that has a `session_id` field with a value _similar to_ `504d898c-e975-4e13-9a48-4f8b95d754fb`. This string is your `session-id`, copy it to your clipboard.
 
