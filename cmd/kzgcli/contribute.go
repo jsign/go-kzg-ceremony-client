@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	tryContributeAttemptDelay  = time.Second * 15
+	tryContributeAttemptDelay  = time.Second * 30
 	sendContributionRetryDelay = time.Second
 )
 

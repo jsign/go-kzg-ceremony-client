@@ -87,7 +87,6 @@ func (c *Client) TryContribute(ctx context.Context, sessionID string) (*contribu
 	}
 	// Should we keep waiting for our turn?
 	if mwr.Error != "" {
-		fmt.Println(mwr.Error)
 		return nil, false, nil
 	}
 
