@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      WebAssembly.instantiateStreaming(fetch("go-kzg-ceremony-client.wasm"), go.importObject).then((result) => {
+        go.run(result.instance);
+
+        // contribute (view initialContribution json files for payload example)
+        contribute(JSON.stringify(initialContribution), "some secret").then(function (payload) {
+          const updatedContribution = JSON.parse(payload)
+        })
+
+        // verify updated contribution
+        verify(JSON.stringify(initialContribution), JSON.stringify(updatedContribution)).then(function (result) {
+          console.log('valid', result)
+        })
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

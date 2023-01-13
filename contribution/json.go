@@ -9,7 +9,6 @@ import (
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	"github.com/xeipuuv/gojsonschema"
-	"golang.org/x/sync/errgroup"
 )
 
 //go:embed contributionSchema.json
@@ -26,134 +25,107 @@ type contributionJSON struct {
 	PowersOfTau powersOfTauJSON `json:"powersOfTau"`
 	PotPubKey   string          `json:"potPubkey"`
 }
-type batchContributionJSON struct {
-	Contributions []contributionJSON `json:"contributions"`
-}
 
-func DecodeBatchContribution(bcJSONBytes []byte) (*BatchContribution, error) {
-	if err := schemaCheck(bcJSONBytes, contributionSchemaJSON); err != nil {
+func DecodeContribution(cJSONBytes []byte) (*Contribution, error) {
+	if err := schemaCheck(cJSONBytes, contributionSchemaJSON); err != nil {
 		return nil, fmt.Errorf("validating contribution file schema: %s", err)
 	}
 
-	var bcJSON batchContributionJSON
-	if err := json.Unmarshal(bcJSONBytes, &bcJSON); err != nil {
+	var cJSON contributionJSON
+	if err := json.Unmarshal(cJSONBytes, &cJSON); err != nil {
 		return nil, fmt.Errorf("unmarshaling contribution content: %s", err)
 	}
 
-	bc, err := bcJSON.decode()
+	c, err := cJSON.decode()
 	if err != nil {
 		return nil, fmt.Errorf("subgroup checks: %s", err)
 	}
 
-	return bc, nil
+	return c, nil
 }
 
-func Encode(bc *BatchContribution, pretty bool) ([]byte, error) {
-	bcJSON := batchContributionJSON{
-		Contributions: make([]contributionJSON, len(bc.Contributions)),
-	}
-	for i := range bc.Contributions {
-		potPubKeyBytes := bc.Contributions[i].PotPubKey.Bytes()
-		potPubKeyHex := "0x" + hex.EncodeToString(potPubKeyBytes[:])
-		bcJSON.Contributions[i] = contributionJSON{
-			NumG1Powers: bc.Contributions[i].NumG1Powers,
-			NumG2Powers: bc.Contributions[i].NumG2Powers,
-			PotPubKey:   potPubKeyHex,
-			PowersOfTau: powersOfTauJSON{
-				G1Powers: make([]string, len(bc.Contributions[i].PowersOfTau.G1Affines)),
-				G2Powers: make([]string, len(bc.Contributions[i].PowersOfTau.G2Affines)),
-			},
-		}
-
-		for j := range bc.Contributions[i].PowersOfTau.G1Affines {
-			gBytes := bc.Contributions[i].PowersOfTau.G1Affines[j].Bytes()
-			gHex := hex.EncodeToString(gBytes[:])
-			bcJSON.Contributions[i].PowersOfTau.G1Powers[j] = "0x" + gHex
-		}
-		for j := range bc.Contributions[i].PowersOfTau.G2Affines {
-			gBytes := bc.Contributions[i].PowersOfTau.G2Affines[j].Bytes()
-			gHex := hex.EncodeToString(gBytes[:])
-			bcJSON.Contributions[i].PowersOfTau.G2Powers[j] = "0x" + gHex
-		}
+func Encode(c *Contribution) ([]byte, error) {
+	potPubKeyBytes := c.PotPubKey.Bytes()
+	potPubKeyHex := "0x" + hex.EncodeToString(potPubKeyBytes[:])
+	cJSON := contributionJSON{
+		NumG1Powers: c.NumG1Powers,
+		NumG2Powers: c.NumG2Powers,
+		PotPubKey:   potPubKeyHex,
+		PowersOfTau: powersOfTauJSON{
+			G1Powers: make([]string, len(c.PowersOfTau.G1Affines)),
+			G2Powers: make([]string, len(c.PowersOfTau.G2Affines)),
+		},
 	}
 
-	if pretty {
-		ret, err := json.MarshalIndent(bcJSON, "", "  ")
-		if err != nil {
-			return nil, fmt.Errorf("marshaling batch contribution: %s", err)
-		}
-		return ret, nil
+	for j := range c.PowersOfTau.G1Affines {
+		gBytes := c.PowersOfTau.G1Affines[j].Bytes()
+		gHex := hex.EncodeToString(gBytes[:])
+		cJSON.PowersOfTau.G1Powers[j] = "0x" + gHex
+	}
+	for j := range c.PowersOfTau.G2Affines {
+		gBytes := c.PowersOfTau.G2Affines[j].Bytes()
+		gHex := hex.EncodeToString(gBytes[:])
+		cJSON.PowersOfTau.G2Powers[j] = "0x" + gHex
 	}
 
-	ret, err := json.Marshal(bcJSON)
+	ret, err := json.Marshal(cJSON)
 	if err != nil {
-		return nil, fmt.Errorf("marshaling batch contribution: %s", err)
+		return nil, fmt.Errorf("marshaling contribution: %s", err)
 	}
 	return ret, nil
 }
 
-func (bc *batchContributionJSON) decode() (*BatchContribution, error) {
-	ret := BatchContribution{
-		Contributions: make([]Contribution, len(bc.Contributions)),
+func (c *contributionJSON) decode() (*Contribution, error) {
+	ret := Contribution{}
+
+	potPubKeyBytes, err := hex.DecodeString(c.PotPubKey[2:])
+	if err != nil {
+		return nil, fmt.Errorf("hex decoding pot pubkey: %s", err)
+	}
+	decoder := bls12381.NewDecoder(bytes.NewReader(potPubKeyBytes))
+	var potPubKey bls12381.G2Affine
+	if err := decoder.Decode(&potPubKey); err != nil {
+		return nil, fmt.Errorf("decoding public key into G2: %s", err)
 	}
 
-	var group errgroup.Group
-	for i, contribution := range bc.Contributions {
-		i, contribution := i, contribution
-		group.Go(func() error {
-			potPubKeyBytes, err := hex.DecodeString(contribution.PotPubKey[2:])
-			if err != nil {
-				return fmt.Errorf("hex decoding pot pubkey: %s", err)
-			}
-			decoder := bls12381.NewDecoder(bytes.NewReader(potPubKeyBytes))
-			var potPubKey bls12381.G2Affine
-			if err := decoder.Decode(&potPubKey); err != nil {
-				return fmt.Errorf("decoding public key into G2: %s", err)
-			}
-
-			ret.Contributions[i] = Contribution{
-				NumG1Powers: contribution.NumG1Powers,
-				NumG2Powers: contribution.NumG2Powers,
-				PowersOfTau: PowersOfTau{
-					G1Affines: make([]bls12381.G1Affine, len(contribution.PowersOfTau.G1Powers)),
-					G2Affines: make([]bls12381.G2Affine, len(contribution.PowersOfTau.G2Powers)),
-				},
-				PotPubKey: potPubKey,
-			}
-
-			for j, g1Power := range contribution.PowersOfTau.G1Powers {
-				g1PowerBinary, err := hex.DecodeString(g1Power[2:])
-				if err != nil {
-					return fmt.Errorf("hex decoding %d-th g1 power in %d contribution: %s", j, i, err)
-				}
-
-				// By default the Decoder *will do* subgroup checking.
-				decoder := bls12381.NewDecoder(bytes.NewReader(g1PowerBinary))
-				var g1Point bls12381.G1Affine
-				if err := decoder.Decode(&g1Point); err != nil {
-					return fmt.Errorf("decoding g1 point: %s", err)
-				}
-				ret.Contributions[i].PowersOfTau.G1Affines[j] = g1Point
-			}
-			for j, g2Power := range contribution.PowersOfTau.G2Powers {
-				g2PowerBinary, err := hex.DecodeString(g2Power[2:])
-				if err != nil {
-					return fmt.Errorf("hex decoding %d-th g2 power in %d contribution: %s", j, i, err)
-				}
-
-				// By default the Decoder *will do* subgroup checking.
-				decoder := bls12381.NewDecoder(bytes.NewReader(g2PowerBinary))
-				var g2Point bls12381.G2Affine
-				if err := decoder.Decode(&g2Point); err != nil {
-					return fmt.Errorf("decoding g2 point: %s", err)
-				}
-				ret.Contributions[i].PowersOfTau.G2Affines[j] = g2Point
-			}
-			return nil
-		})
+	ret = Contribution{
+		NumG1Powers: c.NumG1Powers,
+		NumG2Powers: c.NumG2Powers,
+		PowersOfTau: PowersOfTau{
+			G1Affines: make([]bls12381.G1Affine, len(c.PowersOfTau.G1Powers)),
+			G2Affines: make([]bls12381.G2Affine, len(c.PowersOfTau.G2Powers)),
+		},
+		PotPubKey: potPubKey,
 	}
-	if err := group.Wait(); err != nil {
-		return nil, fmt.Errorf("decoding contribution :%s", err)
+
+	for j, g1Power := range c.PowersOfTau.G1Powers {
+		g1PowerBinary, err := hex.DecodeString(g1Power[2:])
+		if err != nil {
+			return nil, fmt.Errorf("hex decoding %d-th g1 power in contribution: %s", j, err)
+		}
+
+		// By default the Decoder *will do* subgroup checking.
+		decoder := bls12381.NewDecoder(bytes.NewReader(g1PowerBinary))
+		var g1Point bls12381.G1Affine
+		if err := decoder.Decode(&g1Point); err != nil {
+			return nil, fmt.Errorf("decoding g1 point: %s", err)
+		}
+		ret.PowersOfTau.G1Affines[j] = g1Point
+	}
+
+	for j, g2Power := range c.PowersOfTau.G2Powers {
+		g2PowerBinary, err := hex.DecodeString(g2Power[2:])
+		if err != nil {
+			return nil, fmt.Errorf("hex decoding %d-th g2 power in contribution: %s", j, err)
+		}
+
+		// By default the Decoder *will do* subgroup checking.
+		decoder := bls12381.NewDecoder(bytes.NewReader(g2PowerBinary))
+		var g2Point bls12381.G2Affine
+		if err := decoder.Decode(&g2Point); err != nil {
+			return nil, fmt.Errorf("decoding g2 point: %s", err)
+		}
+		ret.PowersOfTau.G2Affines[j] = g2Point
 	}
 
 	return &ret, nil

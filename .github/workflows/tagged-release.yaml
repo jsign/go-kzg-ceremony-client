@@ -1,0 +1,35 @@
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  GOOS: js
+  GOARCH: wasm 
+
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - uses: actions/checkout@v3
+      - name: "Build"
+        run: |
+          mkdir build
+          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" build/
+          cd cmd/wasm
+          go build -o ../../build/go-kzg-ceremony-client.wasm
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            LICENSE
+            build/go-kzg-ceremony-client.wasm
+            build/wasm_exec.js
+            index.html

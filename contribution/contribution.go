@@ -1,6 +1,7 @@
 package contribution
 
 import (
+	"encoding/hex"
 	"fmt"
 	"math/big"
 
@@ -24,6 +25,57 @@ type Contribution struct {
 	NumG2Powers int
 	PowersOfTau PowersOfTau
 	PotPubKey   bls12381.G2Affine
+}
+
+func (c *Contribution) Contribute(extRandomness ...[]byte) error {
+	frs := &bls12381Fr.Element{}
+	if _, err := frs.SetRandom(); err != nil {
+		return fmt.Errorf("get random Fr: %s", err)
+	}
+
+	// For every externally provided randomness (if any), we multiply frs (generated with CSRNG),
+	// with a proper map from the []bytes->Fr.
+	for _, externalRandomness := range extRandomness {
+		extFr := &bls12381Fr.Element{}
+
+		// SetBytes() is safe to call with an arbitrary sized []byte since:
+		// - A big.Int `r` will be created from the bytes, which is an arbitrary precision integer.
+		// - gnark-crypto will automatically make r.Mod(BLS_MODULUS) to have a proper Fr.
+		extFr.SetBytes(externalRandomness)
+
+		frs.Mul(frs, extFr)
+	}
+
+	return c.contributeWithFr(frs)
+}
+
+func (c *Contribution) contributeWithSecret(secret string) error {
+	secretBytes, err := hex.DecodeString(secret[2:])
+	if err != nil {
+		return err
+	}
+	fr := &bls12381Fr.Element{}
+	fr.SetBytes(secretBytes)
+	if err != nil {
+		return fmt.Errorf("set Fr from bytes: %s", err)
+	}
+
+	return c.contributeWithFr(fr)
+}
+
+func (c *Contribution) contributeWithFr(fr *bls12381Fr.Element) error {
+	xBig := big.NewInt(0)
+
+	fr.BigInt(xBig)
+
+	c.updatePowersOfTau(xBig)
+	c.updateWitness(xBig)
+
+	// Cleanup in-memory secret.
+	xBig.SetInt64(0)
+	*fr = bls12381Fr.Element{}
+
+	return nil
 }
 
 func (c *Contribution) Verify(previousContribution *Contribution) (bool, error) {

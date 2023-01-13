@@ -1,7 +1,6 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/jsign/go-kzg-ceremony-client)](https://goreportcard.com/report/github.com/jsign/go-kzg-ceremony-client) ![test](https://github.com/jsign/go-kzg-ceremony-client/actions/workflows/test.yaml/badge.svg) ![releases](https://github.com/jsign/go-kzg-ceremony-client/actions/workflows/release.yaml/badge.svg)
+> **This project was forked from [jsign/go-kzg-ceremony-client](https://github.com/jsign/go-kzg-ceremony-client) and quite heavily modified to provide a simple WASM client for the ceremony.**
 
-
-# Ethereum EIP-4844 Powers of Tau ceremony client
+# Ethereum EIP-4844 Powers of Tau ceremony WASM client
 
 This repository contains an implementation of a client to participate in the Powers of Tau ceremony for EIP-4844 in  Ethereum. This is a multi-party ceremony to generate an SRS needed for KZG commitments.
 
