@@ -72,12 +72,18 @@ func (bt *BatchTranscript) Verify() error {
 		// Check that the last running product is equal to G1 first power.
 		lastRunningProductIdx := len(bt.Transcripts[i].Witness.RunningProducts) - 1
 		lastRunningProduct := bt.Transcripts[i].Witness.RunningProducts[lastRunningProductIdx]
-		if lastRunningProduct != bt.Transcripts[i].PowersOfTau.G1Affines[1] {
+		if !lastRunningProduct.Equal(&bt.Transcripts[i].PowersOfTau.G1Affines[1]) {
 			return fmt.Errorf("last running product doesn't match tau first power")
 		}
 
+		// Check that the first running product is the tau^0 power.
+		firstRunningProduct := bt.Transcripts[i].Witness.RunningProducts[0]
+		if !firstRunningProduct.Equal(&bt.Transcripts[i].PowersOfTau.G1Affines[0]) {
+			return fmt.Errorf("the first running product element should match")
+		}
+
 		// 5. `g1PowersCheck`: checks that the G1 powers in the transcript are coherent powers.
-		for j := 1; j < len(bt.Transcripts[i].PowersOfTau.G1Affines)-1; j++ {
+		for j := 0; j < len(bt.Transcripts[i].PowersOfTau.G1Affines)-1; j++ {
 			j := j
 			g.Go(func() error {
 				baseTauG2 := bt.Transcripts[i].PowersOfTau.G2Affines[1]
@@ -101,7 +107,7 @@ func (bt *BatchTranscript) Verify() error {
 		}
 
 		// 6. `g2PowersCheck`: checks that the G2 powers in the transcript are coherent powers.
-		for j := 1; j < len(bt.Transcripts[i].PowersOfTau.G2Affines)-1; j++ {
+		for j := 0; j < len(bt.Transcripts[i].PowersOfTau.G2Affines)-1; j++ {
 			j := j
 			g.Go(func() error {
 				baseTauG1 := bt.Transcripts[i].PowersOfTau.G1Affines[1]
