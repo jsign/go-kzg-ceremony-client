@@ -67,7 +67,13 @@ func (bt *BatchTranscript) Verify() error {
 				}
 				return nil
 			})
+		}
 
+		// Check that the last running product is equal to G1 first power.
+		lastRunningProductIdx := len(bt.Transcripts[i].Witness.RunningProducts) - 1
+		lastRunningProduct := bt.Transcripts[i].Witness.RunningProducts[lastRunningProductIdx]
+		if lastRunningProduct != bt.Transcripts[i].PowersOfTau.G1Affines[1] {
+			return fmt.Errorf("last running product doesn't match tau first power")
 		}
 
 		// 5. `g1PowersCheck`: checks that the G1 powers in the transcript are coherent powers.
