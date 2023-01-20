@@ -118,7 +118,7 @@ Success!
 If you want to understand in more detail how the external entropy is mixed with the CSRNG, please see [this code section](https://github.com/jsign/go-kzg-ceremony-client/blob/main/contribution/batchcontribution.go#L24-L35).
 
 ## Verify the current sequencer transcript ourselves
-The sequencer has [an API that provides a full transcript](https://sequencer.ceremony.ethereum.org/info/current_state) of all the contributions, so anyone can double-check the calculations to see if the result matches all the received contributions.
+The sequencer has [an API that provides a full transcript](https://seq.ceremony.ethereum.org/info/current_state) of all the contributions, so anyone can double-check the calculations to see if the result matches all the received contributions.
 
 Having clients double-check sequencer calculations avoids having to trust that the sequencer is in the latest powers of Tau calculation.
 
