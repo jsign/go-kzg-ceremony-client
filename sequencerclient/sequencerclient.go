@@ -69,7 +69,7 @@ func (c *Client) TryContribute(ctx context.Context, sessionID string) (*contribu
 	defer res.Body.Close()
 
 	if res.StatusCode == http.StatusUnauthorized {
-		return nil, false, fmt.Errorf("wrong or expired session-id, login again with the sequencer")
+		return nil, false, fmt.Errorf("wrong or expired session-id, login again with the sequencer, session-id: %v", sessionID)
 	}
 	if res.StatusCode != http.StatusOK {
 		return nil, false, fmt.Errorf("received status code %d", res.StatusCode)
