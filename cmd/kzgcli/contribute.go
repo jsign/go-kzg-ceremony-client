@@ -79,12 +79,12 @@ func contributeToCeremony(ctx context.Context, client *sequencerclient.Client, s
 		fmt.Printf("Waiting for our turn to contribute...\n")
 		cb, ok, err := client.TryContribute(ctx, sessionID)
 		if err != nil {
-			fmt.Printf("Waiting for our turn failed (err: %s), retrying in %v...\n", err, tryContributeAttemptDelay)
+			fmt.Printf("%v Waiting for our turn failed (err: %s), retrying in %v...\n", time.Now().Format("2006-01-02 15:04:05"), err, tryContributeAttemptDelay)
 			time.Sleep(tryContributeAttemptDelay)
 			continue
 		}
 		if !ok {
-			fmt.Printf("Still isn't our turn, waiting %v for retrying...\n", tryContributeAttemptDelay)
+			fmt.Printf("%v Still isn't our turn, waiting %v for retrying...\n", time.Now().Format("2006-01-02 15:04:05"), tryContributeAttemptDelay)
 			time.Sleep(tryContributeAttemptDelay)
 			continue
 		}
@@ -117,11 +117,11 @@ func contributeToCeremony(ctx context.Context, client *sequencerclient.Client, s
 
 	// Persist the receipt and contribution.
 	receiptJSON, _ := json.Marshal(contributionReceipt)
-	if err := os.WriteFile("contribution_receipt.json", receiptJSON, os.ModePerm); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("contribution_receipt_%s.json", sessionID), receiptJSON, os.ModePerm); err != nil {
 		log.Fatalf("failed to save the contribution receipt (err: %s), printing to stdout as last resort: %s", err, receiptJSON)
 	}
 	ourContributionBatchJSON, _ := contribution.Encode(contributionBatch, true)
-	if err := os.WriteFile("my_contribution.json", ourContributionBatchJSON, os.ModePerm); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("my_contribution_%s.json", sessionID), ourContributionBatchJSON, os.ModePerm); err != nil {
 		log.Fatalf("failed to save the contribution (err: %s), printing to stdout as last resort: %s", err, ourContributionBatchJSON)
 	}
 
