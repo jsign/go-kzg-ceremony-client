@@ -54,6 +54,8 @@ func init() {
 	rootCmd.AddCommand(offlineCmd)
 
 	offlineCmd.AddCommand(offlineDownloadStateCmd)
+
+	offlineContributeCmd.Flags().String("urlrand", "", "Pull entropy from an HTTP endpoint mixed with local CSRNG")
 	offlineCmd.AddCommand(offlineContributeCmd)
 }
 

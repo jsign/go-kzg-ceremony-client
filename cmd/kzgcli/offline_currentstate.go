@@ -12,7 +12,7 @@ import (
 
 var offlineDownloadStateCmd = &cobra.Command{
 	Use:   "download-state <path>",
-	Short: "Downloads the current state of the ceremony",
+	Short: "Downloads the current state of the ceremony, and saves it in a file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
 			log.Fatalf("one argument exected")

@@ -18,6 +18,7 @@ For _bls12-381_ elliptic curve operations such as group multiplication and pairi
     - [Step 3 - Contribute!](#step-3---contribute)
     - [Step 4 (optional) - Check that your contribution is in the new transcript](#step-4-optional---check-that-your-contribution-is-in-the-new-transcript)
   - [External entropy](#external-entropy)
+  - [Offline contributions](#offline-contributions)
   - [Verify the current sequencer transcript ourselves](#verify-the-current-sequencer-transcript-ourselves)
   - [Tests and benchmarks](#tests-and-benchmarks)
   - [Side-effects of this ceremony client work](#side-effects-of-this-ceremony-client-work)
@@ -116,6 +117,32 @@ Success!
 ```
 
 If you want to understand in more detail how the external entropy is mixed with the CSRNG, please see [this code section](https://github.com/jsign/go-kzg-ceremony-client/blob/main/contribution/batchcontribution.go#L24-L35).
+
+## Offline contributions
+This section is only interesting if you're contributing from constrained environments.
+
+Apart from conforming to the specification for the Powers of Tau protocol, participating in the ceremony involves interacting with the sequencer in a defined API flow. If you are contributing from a constraint environment (e.g: air-gapped or bandwidth constrained), you might be interested in narrowing down the contribution step independently from getting the state and sending the contribution.
+
+The CLI tool provides an _offline_ subcommand:
+
+- `kzgcli offline download-state <file-path>`: downloads the current state of the ceremony from the sequencer and saves it in a file.
+- `kzgcli offline contribute <current-state-path> <new-state-path>`: opens a previously downloaded current state of the ceremony, makes the contribution and saves it in a new file.
+
+The former might not be needed if you're pulling the state yourself or is sent by the sequencer out-of-band, but if you have internet access, you can use this command to do this automatically. 
+
+The latter doesn't require internet access. You can send the generated file with the current state of the ceremony to the sequencer (out-of-band). This command also accepts the `--urlrand` flag if you want to pull entropy from an external source of randomness available in your environment.
+
+A full example of running both:
+```
+$ kzgcli offline download-state current.json
+Downloading current state... OK
+Encoding and saving to current.json... OK
+Saved current state in current.json
+$ kzgcli offline contribute current.json new.json
+Opening and parsing offline current state file...OK
+Calculating contribution... OK
+Success, saved contribution in new.json
+```
 
 ## Verify the current sequencer transcript ourselves
 The sequencer has [an API that provides a full transcript](https://seq.ceremony.ethereum.org/info/current_state) of all the contributions, so anyone can double-check the calculations to see if the result matches all the received contributions.

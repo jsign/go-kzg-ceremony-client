@@ -7,15 +7,31 @@ import (
 	"os"
 
 	"github.com/jsign/go-kzg-ceremony-client/contribution"
+	"github.com/jsign/go-kzg-ceremony-client/extrand"
 	"github.com/spf13/cobra"
 )
 
 var offlineContributeCmd = &cobra.Command{
 	Use:   "contribute <path-current-state-file> <path-contribution-file>",
-	Short: "Reads the current state of the ceremony from a file, makes the contribution, and save it to a file",
+	Short: "Opens a file with the current state of the ceremony, makes the contribution, and saves the new state to a file.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 2 {
 			log.Fatalf("two arguments expected")
+		}
+
+		urlrand, err := cmd.Flags().GetString("urlrand")
+		if err != nil {
+			log.Fatalf("get --urlrand flag value: %s", err)
+		}
+		var extRandomness [][]byte
+		if urlrand != "" {
+			fmt.Printf("Pulling entropy from %s... ", urlrand)
+			urlBytes, err := extrand.GetFromURL(cmd.Context(), urlrand)
+			if err != nil {
+				log.Fatalf("get bytes from url: %s", err)
+			}
+			fmt.Printf("Got it! (length: %d)\n", len(urlBytes))
+			extRandomness = append(extRandomness, urlBytes)
 		}
 
 		fmt.Printf("Opening and parsing offline current state file...")
@@ -35,7 +51,7 @@ var offlineContributeCmd = &cobra.Command{
 		}
 		fmt.Printf("OK\nCalculating contribution... ")
 
-		if err := contributionBatch.Contribute(); err != nil {
+		if err := contributionBatch.Contribute(extRandomness...); err != nil {
 			log.Fatalf("failed on calculating contribution: %s", err)
 		}
 
