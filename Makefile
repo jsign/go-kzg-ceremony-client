@@ -7,8 +7,13 @@ test:
 .PHONY: test
 
 build:
-	go build -o kzgcli ./cmd/kzgcli
+	go build ./cmd/kzgcli
 .PHONY: build
+
+small-linux-arm-build:
+	GOOS=linux GOARCH=arm go build -ldflags="-s -w" ./cmd/kzgcli
+	upx --brute kzgcli
+.PHONY: small-linux-build
 
 bench:
 	go test ./... -run=none -bench=.
