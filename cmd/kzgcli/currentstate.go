@@ -10,18 +10,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var currentStateCmd = &cobra.Command{
-	Use:   "current-state",
+var offlineDownloadStateCmd = &cobra.Command{
+	Use:   "download-state <path>",
 	Short: "Downloads the current state of the ceremony",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) != 1 {
+			log.Fatalf("one argument exected")
+		}
 		client, err := sequencerclient.New()
 		if err != nil {
 			log.Fatalf("creating sequencer client: %s", err)
 		}
+
+		fmt.Printf("Downloading current state... ")
 		transcript, err := client.GetCurrentTranscript(cmd.Context())
 		if err != nil {
 			log.Fatalf("getting current transcript: %s", err)
 		}
+		fmt.Printf("OK\n")
+
 		bc := contribution.BatchContribution{
 			Contributions: make([]contribution.Contribution, len(transcript.Transcripts)),
 		}
@@ -31,15 +38,16 @@ var currentStateCmd = &cobra.Command{
 			bc.Contributions[i].PowersOfTau = transcript.PowersOfTau
 		}
 
+		fmt.Printf("Encoding and saving to %s... ", args[0])
 		bytes, err := contribution.Encode(&bc, true)
 		if err != nil {
 			log.Fatalf("encoding current state to json: %s", err)
 		}
 
-		if err := os.WriteFile("current_state.json", bytes, os.ModePerm); err != nil {
+		if err := os.WriteFile(args[0], bytes, os.ModePerm); err != nil {
 			log.Fatalf("writing current state to file: %s", err)
 		}
 
-		fmt.Printf("Saved current state in current_state.json\n")
+		fmt.Printf("OK\nSaved current state in %s\n", args[0])
 	},
 }

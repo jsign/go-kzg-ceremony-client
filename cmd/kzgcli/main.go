@@ -29,6 +29,16 @@ https://github.com/jsign/go-kzg-ceremony-client#i-want-to-participate-in-the-cer
 	},
 }
 
+var offlineCmd = &cobra.Command{
+	Use:   "offline",
+	Short: "Contains commands for offline contributions",
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := cmd.Usage(); err != nil {
+			log.Fatalf("cmd usage failed: %s", err)
+		}
+	},
+}
+
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
@@ -40,7 +50,11 @@ func init() {
 	rootCmd.AddCommand(contributeCmd)
 
 	rootCmd.AddCommand(verifyTranscriptCmd)
-	rootCmd.AddCommand(currentStateCmd)
+
+	rootCmd.AddCommand(offlineCmd)
+
+	offlineCmd.AddCommand(offlineDownloadStateCmd)
+	offlineCmd.AddCommand(offlineContributeCmd)
 }
 
 func Execute() {
