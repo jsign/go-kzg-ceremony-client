@@ -40,6 +40,7 @@ func init() {
 	rootCmd.AddCommand(contributeCmd)
 
 	rootCmd.AddCommand(verifyTranscriptCmd)
+	rootCmd.AddCommand(currentStateCmd)
 }
 
 func Execute() {
