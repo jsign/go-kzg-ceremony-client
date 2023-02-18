@@ -2,6 +2,7 @@ package transcript
 
 import (
 	"fmt"
+	"runtime"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	"github.com/jsign/go-kzg-ceremony-client/contribution"
@@ -42,6 +43,7 @@ func (bt *BatchTranscript) Verify() error {
 	// 3. `subgroup_checks`` was checked when parsing the JSON, since gnark-crypto does the check when decoding G(1|2) bytes.
 
 	var g errgroup.Group
+	g.SetLimit(runtime.NumCPU())
 	for i := range bt.Transcripts {
 		i := i
 		// 4. `tau_update_check`: check that `runningProducts` is valid by checking the pairings of each element with the
