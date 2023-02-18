@@ -62,7 +62,7 @@ func (bc *BatchContribution) contributeWithFrs(frs []*bls12381Fr.Element) error 
 		g.Go(func(i int, contribution *Contribution) func() error {
 			return func() error {
 				xBig := big.NewInt(0)
-				frs[i].ToBigIntRegular(xBig)
+				frs[i].BigInt(xBig)
 
 				contribution.updatePowersOfTau(xBig)
 				contribution.updateWitness(xBig)

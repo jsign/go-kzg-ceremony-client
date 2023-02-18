@@ -6,15 +6,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	"github.com/jsign/go-kzg-ceremony-client/contribution"
-	"github.com/xeipuuv/gojsonschema"
 	"golang.org/x/sync/errgroup"
 )
-
-//go:embed transcriptSchema.json
-var transcriptSchemaJSON []byte
 
 type powersOfTauJSON struct {
 	G1Powers []string `json:"G1Powers"`
@@ -40,13 +37,9 @@ type batchTranscriptJSON struct {
 	ParticipantECDSASignatures []string         `json:"participantEcdsaSignatures"`
 }
 
-func Decode(transcriptJSONBytes []byte) (*BatchTranscript, error) {
-	if err := schemaCheck(transcriptJSONBytes, transcriptSchemaJSON); err != nil {
-		return nil, fmt.Errorf("validating contribution file schema: %s", err)
-	}
-
+func Decode(reader io.Reader) (*BatchTranscript, error) {
 	var trJSON batchTranscriptJSON
-	if err := json.Unmarshal(transcriptJSONBytes, &trJSON); err != nil {
+	if err := json.NewDecoder(reader).Decode(&trJSON); err != nil {
 		return nil, fmt.Errorf("unmarshaling contribution content: %s", err)
 	}
 
@@ -160,18 +153,4 @@ func (ts *batchTranscriptJSON) decode() (*BatchTranscript, error) {
 	}
 
 	return &ret, nil
-}
-
-func schemaCheck(contribution []byte, schema []byte) error {
-	schemaLoader := gojsonschema.NewBytesLoader(contribution)
-	documentLoader := gojsonschema.NewBytesLoader(schema)
-	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	if err != nil {
-		return fmt.Errorf("validating json schema: %s", err)
-	}
-	if !res.Valid() {
-		return fmt.Errorf("schema validation failed: %v", res.Errors())
-	}
-
-	return nil
 }

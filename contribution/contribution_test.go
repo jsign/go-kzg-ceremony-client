@@ -148,7 +148,9 @@ func TestExternalRandomness(t *testing.T) {
 	// Add external URL randomness
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("imexternalrandomness"))
+		if _, err := w.Write([]byte("imexternalrandomness")); err != nil {
+			t.Fatalf("")
+		}
 	}))
 	urlrandmness, err := extrand.GetFromURL(context.Background(), s.URL)
 	require.NoError(t, err)

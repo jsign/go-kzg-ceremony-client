@@ -8,12 +8,8 @@ import (
 	"fmt"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
-	"github.com/xeipuuv/gojsonschema"
 	"golang.org/x/sync/errgroup"
 )
-
-//go:embed contributionSchema.json
-var contributionSchemaJSON []byte
 
 type powersOfTauJSON struct {
 	G1Powers []string `json:"G1Powers"`
@@ -31,10 +27,6 @@ type batchContributionJSON struct {
 }
 
 func DecodeBatchContribution(bcJSONBytes []byte) (*BatchContribution, error) {
-	if err := schemaCheck(bcJSONBytes, contributionSchemaJSON); err != nil {
-		return nil, fmt.Errorf("validating contribution file schema: %s", err)
-	}
-
 	var bcJSON batchContributionJSON
 	if err := json.Unmarshal(bcJSONBytes, &bcJSON); err != nil {
 		return nil, fmt.Errorf("unmarshaling contribution content: %s", err)
@@ -157,18 +149,4 @@ func (bc *batchContributionJSON) decode() (*BatchContribution, error) {
 	}
 
 	return &ret, nil
-}
-
-func schemaCheck(contribution []byte, schema []byte) error {
-	schemaLoader := gojsonschema.NewBytesLoader(contribution)
-	documentLoader := gojsonschema.NewBytesLoader(schema)
-	res, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	if err != nil {
-		return fmt.Errorf("validating json schema: %s", err)
-	}
-	if !res.Valid() {
-		return fmt.Errorf("schema validation failed: %v", res.Errors())
-	}
-
-	return nil
 }

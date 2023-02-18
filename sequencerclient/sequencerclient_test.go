@@ -19,7 +19,7 @@ func TestGetStatus(t *testing.T) {
 	require.NotEmpty(t, status.SequencerAddress)
 }
 
-func TestDevnetVerification(t *testing.T) {
+func TestLiveVerification(t *testing.T) {
 	t.Parallel()
 
 	client := createClient(t)

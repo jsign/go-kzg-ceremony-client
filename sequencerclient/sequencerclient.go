@@ -162,12 +162,7 @@ func (c *Client) GetCurrentTranscript(ctx context.Context) (*transcript.BatchTra
 		return nil, fmt.Errorf("received status code %d", res.StatusCode)
 	}
 
-	resBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, fmt.Errorf("reading response: %s", err)
-	}
-
-	batchTranscript, err := transcript.Decode(resBody)
+	batchTranscript, err := transcript.Decode(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("validating current contribution file: %s", err)
 	}
