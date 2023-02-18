@@ -2,8 +2,10 @@ package sequencerclient
 
 import (
 	"context"
+	"os"
 	"testing"
 
+	"github.com/jsign/go-kzg-ceremony-client/transcript"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,12 +21,14 @@ func TestGetStatus(t *testing.T) {
 	require.NotEmpty(t, status.SequencerAddress)
 }
 
-func TestLiveVerification(t *testing.T) {
+func TestVerifyTranscript(t *testing.T) {
 	t.Parallel()
 
-	client := createClient(t)
+	f, err := os.Open("testdata/transcript_20230218_120700.json")
+	require.NoError(t, err)
+	defer f.Close()
 
-	btr, err := client.GetCurrentTranscript(context.Background())
+	btr, err := transcript.Decode(f)
 	require.NoError(t, err)
 
 	err = btr.Verify()
