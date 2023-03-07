@@ -44,19 +44,23 @@ func init() {
 
 	rootCmd.AddCommand(statusCmd)
 
+	// Online contribution commands.
 	contributeCmd.Flags().String("session-id", "", "The sesion id as generated in the 'session_id' field in the authentication process")
 	contributeCmd.Flags().Bool("drand", false, "Pull entropy from the Drand network to be mixed with local CSRNG")
 	contributeCmd.Flags().String("urlrand", "", "Pull entropy from an HTTP endpoint mixed with local CSRNG")
 	rootCmd.AddCommand(contributeCmd)
 
+	// Verification commands.
 	rootCmd.AddCommand(verifyTranscriptCmd)
 
-	rootCmd.AddCommand(offlineCmd)
-
-	offlineCmd.AddCommand(offlineDownloadStateCmd)
-
+	// Offline commands.
 	offlineContributeCmd.Flags().String("urlrand", "", "Pull entropy from an HTTP endpoint mixed with local CSRNG")
+	offlineSendContributionCmd.Flags().String("session-id", "", "The sesion id as generated in the 'session_id' field in the authentication process")
+
+	rootCmd.AddCommand(offlineCmd)
+	offlineCmd.AddCommand(offlineDownloadStateCmd)
 	offlineCmd.AddCommand(offlineContributeCmd)
+	offlineCmd.AddCommand(offlineSendContributionCmd)
 }
 
 func Execute() {

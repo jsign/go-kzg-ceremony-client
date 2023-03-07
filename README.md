@@ -126,13 +126,16 @@ Apart from conforming to the specification for the Powers of Tau protocol, parti
 The CLI tool provides an _offline_ subcommand:
 
 - `kzgcli offline download-state <file-path>`: downloads the current state of the ceremony from the sequencer and saves it in a file.
-- `kzgcli offline contribute <current-state-path> <new-state-path>`: opens a previously downloaded current state of the ceremony, makes the contribution and saves it in a new file.
+- `kzgcli offline contribute <current-state-path> <contribution-path>`: opens a previously downloaded current state of the ceremony, makes the contribution and saves it in a new file.
+- `kzgcli offline send-contribution --session-id <...> <contribution-path>`: sends a previously generated contribution file to the sequencer.
 
-The former might not be needed if you're pulling the state yourself or is sent by the sequencer out-of-band, but if you have internet access, you can use this command to do this automatically. 
+You might not need `kzgcli offline download-state` you're pulling the current state out-of-band (e.g: direct download or the sequencer sent it to you). If that isn't the case, you can use it in an environment that has internet access (not necessarily your contribution environment).
 
-The latter doesn't require internet access. You can send the generated file with the current state of the ceremony to the sequencer (out-of-band). This command also accepts the `--urlrand` flag if you want to pull entropy from an external source of randomness available in your environment.
+The `kzgcli offline contribute` command doesn't require internet access, and will probably be the only command you'll run in your constrained environment. This command also accepts the `--urlrand` flag if you want to pull entropy from an external source of randomness available in your environment.
 
-A full example of running both:
+The `kzgcli offline send-contribution` command sends the previously generated file by `kzgcli offline contribute` to the sequencer.
+
+An example of running the first two commands:
 ```
 $ kzgcli offline download-state current.json
 Downloading current state... OK
