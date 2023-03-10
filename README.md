@@ -13,8 +13,8 @@ Used by:
 - [Dappnode](https://twitter.com/eduadiez/status/1623963202500304896)
 - [Dodgekzg](https://www.dogekzg.com/) (WASM)
 - [Raspberry Pi contributor](https://twitter.com/bruderbuck/status/1617424902256041985)
-- [cryptosat](https://twitter.com/cryptosat) (Planned for Phase 2)
-- [KZGamer](https://hackmd.io/@RoboCopsGoneMad/Bk3zqWDij) (Planned for Phase 2)
+- [cryptosat](https://twitter.com/cryptosat) (Planned for "Special contributions" phase)
+- [KZGamer](https://hackmd.io/@RoboCopsGoneMad/Bk3zqWDij) (Planned for "Special contributions" phase)
  
 
 
