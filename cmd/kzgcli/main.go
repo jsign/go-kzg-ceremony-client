@@ -56,6 +56,7 @@ func init() {
 
 	// Offline commands.
 	offlineContributeCmd.Flags().String("urlrand", "", "Pull entropy from an HTTP endpoint mixed with local CSRNG")
+	offlineContributeCmd.Flags().String("hex-entropy", "", "Hex encoded entropy to be mixed with local CSRNG")
 	offlineSendContributionCmd.Flags().String("session-id", "", "The sesion id as generated in the 'session_id' field in the authentication process")
 
 	rootCmd.AddCommand(offlineCmd)

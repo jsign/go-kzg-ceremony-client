@@ -143,7 +143,7 @@ The CLI tool provides an _offline_ subcommand:
 
 You might not need `kzgcli offline download-state` you're pulling the current state out-of-band (e.g: direct download or the sequencer sent it to you). If that isn't the case, you can use it in an environment that has internet access (not necessarily your contribution environment).
 
-The `kzgcli offline contribute` command doesn't require internet access, and will probably be the only command you'll run in your constrained environment. This command also accepts the `--urlrand` flag if you want to pull entropy from an external source of randomness available in your environment.
+The `kzgcli offline contribute` command doesn't require internet access, and will probably be the only command you'll run in your constrained environment. This command also accepts the `--urlrand` and `--hex-entropy` flag if you want to pull entropy from an external source of randomness available in your environment or provided directly to the client, respectively.
 
 The `kzgcli offline send-contribution` command sends the previously generated file by `kzgcli offline contribute` to the sequencer.
 

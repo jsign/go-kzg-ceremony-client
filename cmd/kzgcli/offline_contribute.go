@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/jsign/go-kzg-ceremony-client/contribution"
 	"github.com/jsign/go-kzg-ceremony-client/extrand"
@@ -32,6 +34,18 @@ var offlineContributeCmd = &cobra.Command{
 			}
 			fmt.Printf("Got it! (length: %d)\n", len(urlBytes))
 			extRandomness = append(extRandomness, urlBytes)
+		}
+		hexEntropy, err := cmd.Flags().GetString("hex-entropy")
+		if err != nil {
+			log.Fatalf("get --hex-entropy flag value: %s", err)
+		}
+		if hexEntropy != "" {
+			hexEntropy := strings.TrimPrefix(hexEntropy, "0x")
+			hb, err := hex.DecodeString(hexEntropy)
+			if err != nil {
+				log.Fatalf("decoding hex entropy: %s", err)
+			}
+			extRandomness = append(extRandomness, hb)
 		}
 
 		fmt.Printf("Opening and parsing offline current state file...")
