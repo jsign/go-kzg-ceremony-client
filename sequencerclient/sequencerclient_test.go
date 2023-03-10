@@ -36,7 +36,7 @@ func TestVerifyTranscript(t *testing.T) {
 }
 
 func createClient(t *testing.T) *Client {
-	c, err := New()
+	c, err := New("https://seq.ceremony.ethereum.org")
 	require.NoError(t, err)
 	return c
 }

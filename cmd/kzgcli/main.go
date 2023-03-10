@@ -41,6 +41,7 @@ var offlineCmd = &cobra.Command{
 
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	rootCmd.PersistentFlags().String("sequencer-url", "https://seq.ceremony.ethereum.org", "The URL of the ceremony sequencer")
 
 	rootCmd.AddCommand(statusCmd)
 

@@ -19,7 +19,8 @@ For _bls12-381_ elliptic curve operations such as group multiplication and pairi
     - [Step 4 (optional) - Check that your contribution is in the new transcript](#step-4-optional---check-that-your-contribution-is-in-the-new-transcript)
   - [External entropy](#external-entropy)
   - [Offline contributions](#offline-contributions)
-  - [Verify the current sequencer transcript ourselves](#verify-the-current-sequencer-transcript-ourselves)
+  - [Testing ceremony environment](#testing-ceremony-environment)
+  - [Verify the current sequencer transcript](#verify-the-current-sequencer-transcript)
   - [Tests and benchmarks](#tests-and-benchmarks)
   - [Side-effects of this ceremony client work](#side-effects-of-this-ceremony-client-work)
   - [Potential improvements](#potential-improvements)
@@ -147,7 +148,11 @@ Calculating contribution... OK
 Success, saved contribution in new.json
 ```
 
-## Verify the current sequencer transcript ourselves
+## Testing ceremony environment
+
+In all commands you can use the `--sequencer-url` flag to override the sequencer API URL to target a different sequencer than in the _mainnet_ environment. For example, `--sequencer-url "https://kzg-ceremony-sequencer-dev.fly.dev"`.
+
+## Verify the current sequencer transcript
 The sequencer has [an API that provides a full transcript](https://seq.ceremony.ethereum.org/info/current_state) of all the contributions, so anyone can double-check the calculations to see if the result matches all the received contributions.
 
 Having clients double-check sequencer calculations avoids having to trust that the sequencer is in the latest powers of Tau calculation.

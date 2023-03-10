@@ -17,7 +17,11 @@ var offlineDownloadStateCmd = &cobra.Command{
 		if len(args) != 1 {
 			log.Fatalf("one argument exected")
 		}
-		client, err := sequencerclient.New()
+		sequencerURL, err := cmd.Flags().GetString("sequencer-url")
+		if err != nil {
+			log.Fatalf("get --sequencer-url flag value: %s", err)
+		}
+		client, err := sequencerclient.New(sequencerURL)
 		if err != nil {
 			log.Fatalf("creating sequencer client: %s", err)
 		}
