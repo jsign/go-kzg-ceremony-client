@@ -7,6 +7,17 @@ This repository contains an implementation of a client to participate in the Pow
 
 For _bls12-381_ elliptic curve operations such as group multiplication and pairings, the implementation uses the [gnark-crypto](https://github.com/ConsenSys/gnark-crypto) library ([audited Oct-2022](https://github.com/ConsenSys/gnark-crypto/blob/master/audit_oct2022.pdf)).
 
+Used by:
+- Multiple individual contributors
+- [Proof-of-cat](https://proofof.cat/)
+- [Dappnode](https://twitter.com/eduadiez/status/1623963202500304896)
+- [Dodgekzg](https://www.dogekzg.com/) (WASM)
+- [Raspberry Pi contributor](https://twitter.com/bruderbuck/status/1617424902256041985)
+- [cryptosat](https://twitter.com/cryptosat) (Planned for Phase 2)
+- [KZGamer](https://hackmd.io/@RoboCopsGoneMad/Bk3zqWDij) (Planned for Phase 2)
+ 
+
+
 ## Table of content
 - [Ethereum EIP-4844 Powers of Tau ceremony client](#ethereum-eip-4844-powers-of-tau-ceremony-client)
   - [Table of content](#table-of-content)
