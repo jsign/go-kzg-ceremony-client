@@ -46,7 +46,22 @@ var offlineSendContributionCmd = &cobra.Command{
 			log.Fatalf("creating sequencer client: %s", err)
 		}
 
-		fmt.Printf("Sending contribution %s to the sequencer...\n", args[0])
+		for {
+			_, ok, err := client.TryContribute(cmd.Context(), sessionID)
+			if err != nil {
+				fmt.Printf("%v Waiting for our turn failed (err: %s), retrying in %v...\n", time.Now().Format("2006-01-02 15:04:05"), err, tryContributeAttemptDelay)
+				time.Sleep(tryContributeAttemptDelay)
+				continue
+			}
+			if !ok {
+				fmt.Printf("%v Can't enter the lobby, are you sure we're on your reserved slot? Waiting %v for retrying...\n", time.Now().Format("2006-01-02 15:04:05"), tryContributeAttemptDelay)
+				time.Sleep(tryContributeAttemptDelay)
+				continue
+			}
+			break
+		}
+
+		fmt.Printf("Sending our precomputed contribution %s to the sequencer...\n", args[0])
 		var contributionReceipt *sequencerclient.ContributionReceipt
 		for {
 			var err error
