@@ -13,13 +13,11 @@ import (
 	"github.com/jsign/go-kzg-ceremony-client/transcript"
 )
 
-const sequencerURL = "https://seq.ceremony.ethereum.org"
-
 type Client struct {
 	sequencerURL string
 }
 
-func New() (*Client, error) {
+func New(sequencerURL string) (*Client, error) {
 	return &Client{
 		sequencerURL: sequencerURL,
 	}, nil
