@@ -7,6 +7,17 @@ This repository contains an implementation of a client to participate in the Pow
 
 For _bls12-381_ elliptic curve operations such as group multiplication and pairings, the implementation uses the [gnark-crypto](https://github.com/ConsenSys/gnark-crypto) library ([audited Oct-2022](https://github.com/ConsenSys/gnark-crypto/blob/master/audit_oct2022.pdf)).
 
+Used by:
+- Multiple individual contributors
+- [Proof-of-cat](https://proofof.cat/)
+- [Dappnode](https://twitter.com/eduadiez/status/1623963202500304896)
+- [Dodgekzg](https://www.dogekzg.com/) (WASM)
+- [Raspberry Pi contributor](https://twitter.com/bruderbuck/status/1617424902256041985)
+- [cryptosat](https://twitter.com/cryptosat) (Planned for "Special contributions" phase)
+- [KZGamer](https://hackmd.io/@RoboCopsGoneMad/Bk3zqWDij) (Planned for "Special contributions" phase)
+ 
+
+
 ## Table of content
 - [Ethereum EIP-4844 Powers of Tau ceremony client](#ethereum-eip-4844-powers-of-tau-ceremony-client)
   - [Table of content](#table-of-content)
@@ -18,7 +29,9 @@ For _bls12-381_ elliptic curve operations such as group multiplication and pairi
     - [Step 3 - Contribute!](#step-3---contribute)
     - [Step 4 (optional) - Check that your contribution is in the new transcript](#step-4-optional---check-that-your-contribution-is-in-the-new-transcript)
   - [External entropy](#external-entropy)
-  - [Verify the current sequencer transcript ourselves](#verify-the-current-sequencer-transcript-ourselves)
+  - [Offline contributions](#offline-contributions)
+  - [Testing ceremony environment](#testing-ceremony-environment)
+  - [Verify the current sequencer transcript](#verify-the-current-sequencer-transcript)
   - [Tests and benchmarks](#tests-and-benchmarks)
   - [Side-effects of this ceremony client work](#side-effects-of-this-ceremony-client-work)
   - [Potential improvements](#potential-improvements)
@@ -117,7 +130,40 @@ Success!
 
 If you want to understand in more detail how the external entropy is mixed with the CSRNG, please see [this code section](https://github.com/jsign/go-kzg-ceremony-client/blob/main/contribution/batchcontribution.go#L24-L35).
 
-## Verify the current sequencer transcript ourselves
+## Offline contributions
+This section is only interesting if you're contributing from constrained environments.
+
+Apart from conforming to the specification for the Powers of Tau protocol, participating in the ceremony involves interacting with the sequencer in a defined API flow. If you are contributing from a constraint environment (e.g: air-gapped or bandwidth constrained), you might be interested in narrowing down the contribution step independently from getting the state and sending the contribution.
+
+The CLI tool provides an _offline_ subcommand:
+
+- `kzgcli offline download-state <file-path>`: downloads the current state of the ceremony from the sequencer and saves it in a file.
+- `kzgcli offline contribute <current-state-path> <contribution-path>`: opens a previously downloaded current state of the ceremony, makes the contribution and saves it in a new file.
+- `kzgcli offline send-contribution --session-id <...> <contribution-path>`: sends a previously generated contribution file to the sequencer.
+
+You might not need `kzgcli offline download-state` you're pulling the current state out-of-band (e.g: direct download or the sequencer sent it to you). If that isn't the case, you can use it in an environment that has internet access (not necessarily your contribution environment).
+
+The `kzgcli offline contribute` command doesn't require internet access, and will probably be the only command you'll run in your constrained environment. This command also accepts the `--urlrand` and `--hex-entropy` flag if you want to pull entropy from an external source of randomness available in your environment or provided directly to the client, respectively.
+
+The `kzgcli offline send-contribution` command sends the previously generated file by `kzgcli offline contribute` to the sequencer.
+
+An example of running the first two commands:
+```
+$ kzgcli offline download-state current.json
+Downloading current state... OK
+Encoding and saving to current.json... OK
+Saved current state in current.json
+$ kzgcli offline contribute current.json new.json
+Opening and parsing offline current state file...OK
+Calculating contribution... OK
+Success, saved contribution in new.json
+```
+
+## Testing ceremony environment
+
+In all commands you can use the `--sequencer-url` flag to override the sequencer API URL to target a different sequencer than in the _mainnet_ environment. For example, `--sequencer-url "https://kzg-ceremony-sequencer-dev.fly.dev"`.
+
+## Verify the current sequencer transcript
 The sequencer has [an API that provides a full transcript](https://seq.ceremony.ethereum.org/info/current_state) of all the contributions, so anyone can double-check the calculations to see if the result matches all the received contributions.
 
 Having clients double-check sequencer calculations avoids having to trust that the sequencer is in the latest powers of Tau calculation.

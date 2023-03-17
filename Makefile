@@ -7,7 +7,7 @@ test:
 .PHONY: test
 
 build:
-	go build -o kzgcli ./cmd/kzgcli
+	go build ./cmd/kzgcli
 .PHONY: build
 
 bench:
