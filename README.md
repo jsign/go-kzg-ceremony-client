@@ -13,8 +13,8 @@ Used by:
 - [Dappnode](https://twitter.com/eduadiez/status/1623963202500304896)
 - [Dodgekzg](https://www.dogekzg.com/) (WASM)
 - [Raspberry Pi contributor](https://twitter.com/bruderbuck/status/1617424902256041985)
-- [cryptosat](https://twitter.com/cryptosat) (Planned for "Special contributions" phase)
-- [KZGamer](https://hackmd.io/@RoboCopsGoneMad/Bk3zqWDij) (Planned for "Special contributions" phase)
+- [cryptosat](https://twitter.com/ymcrcat/status/1643698029311176704)
+- [KZGamer](https://hackmd.io/@RoboCopsGoneMad/Bk3zqWDij) 
  
 
 
@@ -57,8 +57,6 @@ Using external entropy **does not** interfere with contribution time. It's pulle
 Contributing to the ceremony is very easy, you only need at least one of:
 - An Ethereum address that has sent at least 3 transactions at the Merge block number.
 - A GitHub account that has a commit dated before 1 August 2022 00:00 UTC.
-
-Currently, the ceremony sequencer is in testnet mode, but everything described in this section will be the same when the real ceremony starts.
 
 ### Step 1 - Get the `kzgcli` CLI command
 The `kzgcli` command is the CLI of this ceremony client, you can get it in different ways:
